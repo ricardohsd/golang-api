@@ -11,8 +11,15 @@ func TestRepoCreate(t *testing.T) {
 
 	RepoCreate(newUser)
 
-	if !containsUser(users, "Mary") {
+	if len(users) != 1 || !containsUser(users, "Mary") {
 		t.Errorf("Users list '%v' should contain '%v", users, newUser)
+	}
+
+	// Doesn't duplicate users based on name
+	RepoCreate(newUser)
+
+	if len(users) != 1 {
+		t.Errorf("Users list '%v' should contain only 1 instance of '%v", users, newUser)
 	}
 }
 
