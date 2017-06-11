@@ -7,6 +7,13 @@ import (
 	"net/http"
 )
 
+type jsonError struct {
+	Code int    `json:"code"`
+	Text string `json:"text"`
+}
+
+const jsonHeader string = "application/json;charset=UTF-8"
+
 func UsersIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -26,18 +33,25 @@ func UsersCreate(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		panic(err)
 	}
-	if err := json.Unmarshal(body, &user); err != nil {
-		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-		w.WriteHeader(422)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+
+	w.Header().Set("Content-Type", jsonHeader)
+
+	processJson := func(body []byte, user User) (int, interface{}) {
+		if err := json.Unmarshal(body, &user); err != nil {
+			json := jsonError{Code: http.StatusBadRequest, Text: "payload has wrong format"}
+
+			return http.StatusUnprocessableEntity, json
+		} else {
+			u := RepoCreate(user)
+
+			return http.StatusCreated, u
 		}
 	}
 
-	u := RepoCreate(user)
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(u); err != nil {
+	header, response := processJson(body, user)
+
+	w.WriteHeader(header)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
 }
