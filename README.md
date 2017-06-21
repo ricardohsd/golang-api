@@ -1,6 +1,17 @@
 This is an example of http server written in Golang.
 
-Run the project and in a new terminal window:
+Build the docker image:
+
+```
+   $ docker build -t golang-http-example .
+```
+
+Run the container:
+```
+   $ docker run --rm -it -p 8081:8081 golang-http-example
+```
+
+In a new terminal window, execute:
 
 ```
   $ curl http://127.0.0.1:8081/users
