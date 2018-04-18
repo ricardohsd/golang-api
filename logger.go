@@ -1,23 +1,15 @@
 package main
 
 import (
-	"log"
 	"net/http"
-	"time"
+	"os"
+
+	"github.com/gorilla/handlers"
 )
 
-func Logger(inner http.Handler, name string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+// Logger uses gorilla LogingHandler which record following Apache style logs
+func Logger(inner http.Handler) http.Handler {
+	logFile := os.Stdout
 
-		inner.ServeHTTP(w, r)
-
-		log.Printf(
-			"%s\t%s\t%s\t%s",
-			r.Method,
-			r.RequestURI,
-			name,
-			time.Since(start),
-		)
-	})
+	return handlers.LoggingHandler(logFile, inner)
 }
