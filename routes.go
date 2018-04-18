@@ -22,6 +22,7 @@ func NewRouter() *mux.Router {
 
 		handler = route.HandlerFunc
 		handler = Logger(handler, route.Name)
+		handler = JsonHeader(handler)
 
 		router.
 			Methods(route.Method).

@@ -14,8 +14,15 @@ type jsonError struct {
 
 const jsonHeader string = "application/json;charset=UTF-8"
 
+func JsonHeader(inner http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", jsonHeader)
+
+		inner.ServeHTTP(w, r)
+	})
+}
+
 func UsersIndex(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(users); err != nil {
@@ -33,8 +40,6 @@ func UsersCreate(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		panic(err)
 	}
-
-	w.Header().Set("Content-Type", jsonHeader)
 
 	processJson := func(body []byte, user User) (int, interface{}) {
 		if err := json.Unmarshal(body, &user); err != nil {
