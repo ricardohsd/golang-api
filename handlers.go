@@ -12,16 +12,6 @@ type jsonError struct {
 	Text string `json:"text"`
 }
 
-const jsonHeader string = "application/json;charset=UTF-8"
-
-func JsonHeader(inner http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", jsonHeader)
-
-		inner.ServeHTTP(w, r)
-	})
-}
-
 func UsersIndex(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 

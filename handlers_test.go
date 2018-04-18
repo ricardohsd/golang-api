@@ -13,9 +13,11 @@ func TestUsersIndex(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	req.Header.Set("Content-Type", "application/json")
 
 	responseRecorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(UsersIndex)
+
+	handler := ContentType(http.HandlerFunc(UsersIndex))
 
 	handler.ServeHTTP(responseRecorder, req)
 
@@ -45,9 +47,11 @@ func TestUsersCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	req.Header.Set("Content-Type", "application/json")
 
 	responseRecorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(UsersCreate)
+
+	handler := ContentType(http.HandlerFunc(UsersCreate))
 
 	handler.ServeHTTP(responseRecorder, req)
 
@@ -96,9 +100,10 @@ func TestUsersCreateWithWrongPayload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	req.Header.Set("Content-Type", "application/json")
 
 	responseRecorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(UsersCreate)
+	handler := ContentType(http.HandlerFunc(UsersCreate))
 
 	handler.ServeHTTP(responseRecorder, req)
 
